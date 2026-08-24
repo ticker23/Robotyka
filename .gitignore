@@ -1,0 +1,100 @@
+# ==========================================
+# 1. Python Core & Wirtualne Środowiska
+# ==========================================
+# Pliki skompilowane (Byte-compiled)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Środowiska wirtualne (PEP 405)
+.venv/
+venv/
+env/
+ENV/
+.tox/
+
+# ==========================================
+# 2. Budowanie i Dystrybucja (Packaging)
+# ==========================================
+# Pozostałości po budowaniu pakietów
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Pliki binarne / rozszerzenia C (jeśli zaczniesz optymalizować algorytmy)
+*.so
+*.o
+*.a
+
+# ==========================================
+# 3. Testy, Linting i Analiza Statyczna
+# ==========================================
+# Cache i raporty z testów (pytest, coverage)
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+nosetests.xml
+
+# Typowanie statyczne i lintery (mypy, ruff, flake8)
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ==========================================
+# 4. Wyniki Symulacji i Logi (Project Specific)
+# ==========================================
+# Logi z działania systemu
+*.log
+logs/
+
+# Wygenerowane wykresy (visualization.py) i dane
+# Repozytorium to nie miejsce na surowe dane
+*.pdf
+*.png
+*.svg
+*.csv
+*.h5
+*.npy
+*.npz
+*.bag
+data/output/
+docs/diagrams/generated/
+
+# ==========================================
+# 5. Edytory, IDE i OS (Dla purystów i reszty zespołu)
+# ==========================================
+# Vim / Neovim (absolutna podstawa)
+*~
+*.sw[a-p]
+*.swo
+Session.vim
+.netrwhist
+
+# Inne IDE (gdyby repo klonował ktoś z innym ekosystemem)
+.idea/
+.vscode/
+*.code-workspace
+__pypackages__/
+
+# Śmieci systemowe
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/

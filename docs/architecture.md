@@ -52,7 +52,20 @@ The MVP system consists of:
 - a simulation loop,
 - system state visualization.
 
-The system operates entirely in a 2D Cartesian workspace.
+## Simulation Dimension
+
+The initial implementation operates in a two-dimensional workspace.
+
+The initial MVP uses:
+
+- two Cartesian coordinates (x, y),
+- a 2-DOF planar manipulator.
+
+The architecture should allow future extension to additional degrees of
+freedom and potentially a three-dimensional workspace.
+
+The MVP implementation should not introduce unnecessary abstractions for
+future scenarios that are not yet required.
 
 Real hardware, physical drones and camera-based detection are outside
 the scope of the MVP.

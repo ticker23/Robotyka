@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check run clean
+.PHONY: setup test lint format format-check check run clean
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -12,7 +12,10 @@ lint:
 format:
 	ruff format .
 
-check: lint test
+format-check:
+	ruff format --check .
+
+check: format-check lint test
 
 run:
 	python scripts/run_simulation.py

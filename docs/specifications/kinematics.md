@@ -1,3 +1,22 @@
+## Implementation Phases
+
+The kinematics module will be implemented incrementally.
+
+### Phase 1
+
+Implement:
+
+- `forward_kinematics()`
+- `is_reachable()`
+
+### Phase 2
+
+Implement:
+
+- `inverse_kinematics()`
+
+The full module specification remains the target architecture,
+while individual implementation tasks may cover only part of the module.
 ## Status
 
 Planned

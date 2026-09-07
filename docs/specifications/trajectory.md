@@ -90,8 +90,7 @@ class Trajectory(Protocol):
     def get_position(
         self,
         time: float,
-    ) -> tuple[float, float]:
-        ...
+    ) -> tuple[float, float]: ...
 ```
 
 Concrete trajectory classes are not required to inherit explicitly from

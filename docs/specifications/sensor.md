@@ -154,20 +154,17 @@ class Sensor:
         position: tuple[float, float],
         detection_range: float,
         noise_std: float = 0.0,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def is_detected(
         self,
         target_position: tuple[float, float],
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     def measure(
         self,
         target_position: tuple[float, float],
-    ) -> tuple[float, float] | None:
-        ...
+    ) -> tuple[float, float] | None: ...
 ```
 
 The exact internal implementation is not prescribed.

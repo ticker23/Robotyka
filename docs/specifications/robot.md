@@ -164,16 +164,14 @@ class Robot:
         link_2: float,
         q1: float = 0.0,
         q2: float = 0.0,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def update(
         self,
         q1_velocity: float,
         q2_velocity: float,
         dt: float,
-    ) -> None:
-        ...
+    ) -> None: ...
 ```
 
 The exact internal implementation is not prescribed.

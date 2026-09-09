@@ -430,19 +430,16 @@ class PIDController:
         kp: float,
         ki: float,
         kd: float,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def update(
         self,
         target: float,
         current: float,
         dt: float,
-    ) -> float:
-        ...
+    ) -> float: ...
 
-    def reset(self) -> None:
-        ...
+    def reset(self) -> None: ...
 ```
 
 The exact internal representation is not prescribed.

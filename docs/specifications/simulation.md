@@ -138,11 +138,9 @@ class Simulation:
         robot: Robot,
         pid_q1: PIDController,
         pid_q2: PIDController,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-    def step(self, dt: float) -> SimulationStep:
-        ...
+    def step(self, dt: float) -> SimulationStep: ...
 ```
 
 The exact internal implementation is not prescribed.

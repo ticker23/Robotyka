@@ -46,3 +46,38 @@ class Sensor:
             target_x + gauss(0.0, self.noise_std),
             target_y + gauss(0.0, self.noise_std),
         )
+
+
+class TargetTracker:
+    def __init__(self) -> None:
+        self.current_position: tuple[float, float] | None = None
+        self.previous_position: tuple[float, float] | None = None
+        self.velocity: tuple[float, float] | None = None
+
+    def update(self, measured_position: tuple[float, float], dt: float) -> None:
+        if dt <= 0:
+            raise ValueError("dt must be greater than zero")
+
+        self.previous_position = self.current_position
+        self.current_position = measured_position
+
+        if self.previous_position is None:
+            return
+
+        dx = self.current_position[0] - self.previous_position[0]
+        dy = self.current_position[1] - self.previous_position[1]
+
+        vx = dx / dt
+        vy = dy / dt
+        self.velocity = (vx, vy)
+
+    def prediction(self, prediction_time: float) -> tuple[float, float]:
+        if self.velocity is None or self.current_position is None:
+            raise ValueError("current_position and velocity must be available")
+
+        if prediction_time < 0:
+            raise ValueError("prediction_time must not be negative")
+
+        pred_x = self.current_position[0] + self.velocity[0] * prediction_time
+        pred_y = self.current_position[1] + self.velocity[1] * prediction_time
+        return pred_x, pred_y

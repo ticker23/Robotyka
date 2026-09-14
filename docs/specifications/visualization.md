@@ -194,17 +194,14 @@ class Visualization:
         self,
         robot: Robot,
         sensor: Sensor,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def update(
         self,
         step: SimulationStep,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-    def show(self) -> None:
-        ...
+    def show(self) -> None: ...
 ```
 
 The exact internal structure may differ if required by Matplotlib.
@@ -779,9 +776,7 @@ It must not be added to Simulation state only for graphical purposes.
 Conceptually:
 
 ```python
-self.drone_history.append(
-    step.drone_position
-)
+self.drone_history.append(step.drone_position)
 ```
 
 History may be unlimited for a short demonstration or limited to a reasonable number of points.

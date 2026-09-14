@@ -1,7 +1,15 @@
 import pytest
 
 from anti_drone import sensor as sensor_module
-from anti_drone.sensor import Sensor
+from anti_drone.sensor import Sensor, TargetTracker
+
+
+def test_sensor_initializes_with_valid_configuration() -> None:
+    sensor = Sensor(position=(-1.0, 2.0), detection_range=5.0, noise_std=0.25)
+
+    assert sensor.position == pytest.approx((-1.0, 2.0))
+    assert sensor.detection_range == pytest.approx(5.0)
+    assert sensor.noise_std == pytest.approx(0.25)
 
 
 @pytest.mark.parametrize(
@@ -118,3 +126,155 @@ def test_zero_noise_std_is_valid() -> None:
     sensor = Sensor(position=(0.0, 0.0), detection_range=1.0, noise_std=0.0)
 
     assert sensor.noise_std == pytest.approx(0.0)
+
+
+def test_target_tracker_initial_state_has_no_positions_or_velocity() -> None:
+    tracker = TargetTracker()
+
+    assert tracker.current_position is None
+    assert tracker.previous_position is None
+    assert tracker.velocity is None
+
+
+def test_target_tracker_first_update_stores_current_position() -> None:
+    tracker = TargetTracker()
+
+    tracker.update((1.0, -2.0), dt=0.1)
+
+    assert tracker.current_position == pytest.approx((1.0, -2.0))
+
+
+def test_target_tracker_first_update_keeps_previous_position_none() -> None:
+    tracker = TargetTracker()
+
+    tracker.update((1.0, -2.0), dt=0.1)
+
+    assert tracker.previous_position is None
+
+
+def test_target_tracker_first_update_does_not_calculate_velocity() -> None:
+    tracker = TargetTracker()
+
+    tracker.update((1.0, -2.0), dt=0.1)
+
+    assert tracker.velocity is None
+
+
+def test_target_tracker_second_update_stores_previous_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((1.0, 1.0), dt=0.1)
+
+    tracker.update((1.2, 1.1), dt=0.1)
+
+    assert tracker.previous_position == pytest.approx((1.0, 1.0))
+
+
+def test_target_tracker_second_update_stores_new_current_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((1.0, 1.0), dt=0.1)
+
+    tracker.update((1.2, 1.1), dt=0.1)
+
+    assert tracker.current_position == pytest.approx((1.2, 1.1))
+
+
+def test_target_tracker_second_update_calculates_velocity() -> None:
+    tracker = TargetTracker()
+    tracker.update((1.0, 1.0), dt=0.1)
+
+    tracker.update((1.2, 1.1), dt=0.1)
+
+    assert tracker.velocity == pytest.approx((2.0, 1.0))
+
+
+def test_target_tracker_update_calculates_velocity_for_negative_positions() -> None:
+    tracker = TargetTracker()
+    tracker.update((-2.0, -1.0), dt=0.5)
+
+    tracker.update((-1.0, -3.0), dt=0.5)
+
+    assert tracker.velocity == pytest.approx((2.0, -4.0))
+
+
+def test_target_tracker_update_calculates_zero_velocity_for_unchanged_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((0.0, 0.0), dt=1.0)
+
+    tracker.update((0.0, 0.0), dt=1.0)
+
+    assert tracker.velocity == pytest.approx((0.0, 0.0))
+
+
+def test_target_tracker_repeated_updates_shift_previous_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((0.0, 0.0), dt=1.0)
+    tracker.update((1.0, 2.0), dt=1.0)
+
+    tracker.update((3.0, 1.0), dt=2.0)
+
+    assert tracker.previous_position == pytest.approx((1.0, 2.0))
+
+
+def test_target_tracker_repeated_updates_replace_current_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((0.0, 0.0), dt=1.0)
+    tracker.update((1.0, 2.0), dt=1.0)
+
+    tracker.update((3.0, 1.0), dt=2.0)
+
+    assert tracker.current_position == pytest.approx((3.0, 1.0))
+
+
+def test_target_tracker_repeated_updates_recalculate_velocity() -> None:
+    tracker = TargetTracker()
+    tracker.update((0.0, 0.0), dt=1.0)
+    tracker.update((1.0, 2.0), dt=1.0)
+
+    tracker.update((3.0, 1.0), dt=2.0)
+
+    assert tracker.velocity == pytest.approx((1.0, -0.5))
+
+
+@pytest.mark.parametrize("dt", [0.0, -0.1])
+def test_target_tracker_invalid_dt_raises_value_error(dt: float) -> None:
+    tracker = TargetTracker()
+
+    with pytest.raises(ValueError, match="dt must be greater than zero"):
+        tracker.update((1.0, 1.0), dt=dt)
+
+
+def test_target_tracker_prediction_before_velocity_raises_value_error() -> None:
+    tracker = TargetTracker()
+    tracker.update((12.0, 8.0), dt=1.0)
+
+    with pytest.raises(ValueError, match="current_position and velocity must be available"):
+        tracker.prediction(1.0)
+
+
+def test_target_tracker_prediction_zero_time_returns_current_position() -> None:
+    tracker = TargetTracker()
+    tracker.update((10.0, 5.0), dt=1.0)
+    tracker.update((12.0, 8.0), dt=1.0)
+
+    prediction = tracker.prediction(0.0)
+
+    assert prediction == pytest.approx((12.0, 8.0))
+
+
+def test_target_tracker_prediction_uses_current_position_and_velocity() -> None:
+    tracker = TargetTracker()
+    tracker.update((10.0, 5.0), dt=1.0)
+    tracker.update((12.0, 8.0), dt=1.0)
+
+    prediction = tracker.prediction(2.0)
+
+    assert prediction == pytest.approx((16.0, 14.0))
+
+
+def test_target_tracker_negative_prediction_time_raises_value_error() -> None:
+    tracker = TargetTracker()
+    tracker.update((10.0, 5.0), dt=1.0)
+    tracker.update((12.0, 8.0), dt=1.0)
+
+    with pytest.raises(ValueError, match="prediction_time must not be negative"):
+        tracker.prediction(-0.1)

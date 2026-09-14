@@ -98,3 +98,6 @@ __pypackages__/
 Thumbs.db
 ehthumbs.db
 $RECYCLE.BIN/
+
+# .md do poprawy track 
+track.md

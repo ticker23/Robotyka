@@ -9,7 +9,7 @@ from anti_drone.controller import PIDController
 from anti_drone.drone import Drone
 from anti_drone.kinematics import forward_kinematics, inverse_kinematics, is_reachable
 from anti_drone.robot import Robot
-from anti_drone.sensor import Sensor
+from anti_drone.sensor import Sensor, TargetTracker
 
 
 class SimulationState(Enum):
@@ -40,18 +40,20 @@ class Simulation:
         self,
         drone: Drone,
         sensor: Sensor,
+        tracker: TargetTracker,
         robot: Robot,
         pid_q1: PIDController,
         pid_q2: PIDController,
     ) -> None:
         self.drone = drone
         self.sensor = sensor
+        self.tracker = tracker
         self.robot = robot
         self.pid_q1 = pid_q1
         self.pid_q2 = pid_q2
         self.time = 0.0
 
-    def step(self, dt: float) -> SimulationStep:
+    def step(self, dt: float, prediction_time: float) -> SimulationStep:
         """Advance the simulation by one positive timestep and return a snapshot."""
 
         if dt <= 0:
@@ -67,10 +69,18 @@ class Simulation:
         if measured_position is None:
             state = SimulationState.NO_TARGET
         else:
-            measured_x, measured_y = measured_position
+            self.tracker.update(measured_position, dt)
+            prediction_position = self.tracker.prediction(prediction_time)
+
+            if prediction_position is None:
+                predicted_x, predicted_y = measured_position
+
+            else:
+                predicted_x, predicted_y = prediction_position 
+
             reachable = is_reachable(
-                measured_x,
-                measured_y,
+                predicted_x,
+                predicted_y,
                 self.robot.link_1,
                 self.robot.link_2,
             )
@@ -79,8 +89,8 @@ class Simulation:
                 state = SimulationState.TARGET_UNREACHABLE
             else:
                 target_joint_angles = inverse_kinematics(
-                    measured_x,
-                    measured_y,
+                    predicted_x,
+                    predicted_y,
                     self.robot.link_1,
                     self.robot.link_2,
                 )

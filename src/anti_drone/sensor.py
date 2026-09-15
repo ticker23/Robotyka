@@ -73,7 +73,7 @@ class TargetTracker:
 
     def prediction(self, prediction_time: float) -> tuple[float, float]:
         if self.velocity is None or self.current_position is None:
-            raise ValueError("current_position and velocity must be available")
+            return None
 
         if prediction_time < 0:
             raise ValueError("prediction_time must not be negative")

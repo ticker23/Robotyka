@@ -243,12 +243,11 @@ def test_target_tracker_invalid_dt_raises_value_error(dt: float) -> None:
         tracker.update((1.0, 1.0), dt=dt)
 
 
-def test_target_tracker_prediction_before_velocity_raises_value_error() -> None:
+def test_target_tracker_prediction_before_velocity_returns_none() -> None:
     tracker = TargetTracker()
     tracker.update((12.0, 8.0), dt=1.0)
 
-    with pytest.raises(ValueError, match="current_position and velocity must be available"):
-        tracker.prediction(1.0)
+    assert tracker.prediction(1.0) is None
 
 
 def test_target_tracker_prediction_zero_time_returns_current_position() -> None:

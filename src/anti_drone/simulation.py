@@ -76,7 +76,7 @@ class Simulation:
                 predicted_x, predicted_y = measured_position
 
             else:
-                predicted_x, predicted_y = prediction_position 
+                predicted_x, predicted_y = prediction_position
 
             reachable = is_reachable(
                 predicted_x,

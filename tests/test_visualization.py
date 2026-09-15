@@ -10,7 +10,7 @@ import pytest
 from anti_drone.controller import PIDController
 from anti_drone.drone import Drone
 from anti_drone.robot import Robot
-from anti_drone.sensor import Sensor
+from anti_drone.sensor import Sensor, TargetTracker
 from anti_drone.simulation import Simulation, SimulationState, SimulationStep
 from anti_drone.trajectory import LinearTrajectory
 from anti_drone.visualization import Visualization
@@ -179,13 +179,14 @@ def test_visualization_consumes_real_simulation_step() -> None:
     simulation = Simulation(
         drone=drone,
         sensor=sensor,
+        tracker=TargetTracker(),
         robot=robot,
         pid_q1=PIDController(kp=1.0, ki=0.0, kd=0.0),
         pid_q2=PIDController(kp=1.0, ki=0.0, kd=0.0),
     )
     visualization = Visualization(robot=robot, sensor=sensor)
 
-    step = simulation.step(1.0)
+    step = simulation.step(1.0, prediction_time=0.25)
     visualization.update(step)
 
     assert visualization.state_text.get_text() == "State: TRACKING"

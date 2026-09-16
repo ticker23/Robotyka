@@ -23,7 +23,7 @@ def main() -> None:
         phase=0.0,
     )
     drone = Drone(trajectory)
-    sensor = Sensor(position=(0.0, 0.0), detection_range=2.5, noise_std=0.0)
+    sensor = Sensor(position=(0.0, 0.0), detection_range=2.5, noise_std=0.01)
     tracker = TargetTracker()
     robot = Robot(link_1=1.0, link_2=1.0)
     pid_q1 = PIDController(kp=3.0, ki=0.0, kd=0.15)
